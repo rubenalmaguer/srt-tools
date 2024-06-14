@@ -1,8 +1,15 @@
+// Get this file's path (__dirname only available in CommonJS)
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Actual script
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-const INPUT_DIR_NAME = "./input";
-const OUTPUT_DIR_NAME = "./output";
+const INPUT_DIR_NAME = `${__dirname}/input`;
+const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
 const allFileNames = fs.readdirSync(INPUT_DIR_NAME);
 const supportedExtensions = ["srt", "vtt"];
@@ -24,5 +31,11 @@ for (let fileName of validFileNames) {
   console.log(`\x1b[36m WRITING OUTPUT:  ${fileName} \x1b[0m`);
 
   const outputContent = stringifySync(cues, { format: "srt" });
-  fs.writeFileSync(`./${OUTPUT_DIR_NAME}/${fileName}`, outputContent);
+  fs.writeFileSync(`${OUTPUT_DIR_NAME}/${fileName}`, outputContent);
 }
+
+console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);
+
+
+
+

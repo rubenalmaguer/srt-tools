@@ -1,8 +1,15 @@
-import fs from 'fs'
-import { parseSync, stringifySync } from 'subtitle'
+// Get this file's path (__dirname only available in CommonJS)
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const DIR_NAME = "./input"
-const fileNames = fs.readdirSync(DIR_NAME)
+// Actual script
+import { parseSync } from 'subtitle';
+import fs from 'fs';
+
+const INPUT_DIR_NAME = `${__dirname}/input`
+const fileNames = fs.readdirSync(INPUT_DIR_NAME)
 
 const sortNaturally = (names) => {
   return names.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
@@ -17,7 +24,7 @@ for (let fileName of sortedFileNames) {
 
   let singleFileWordCount = 0
 
-  const rawContent = fs.readFileSync(`${DIR_NAME}/${fileName}`, 'utf8')
+  const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, 'utf8')
   const parsedContent = parseSync(rawContent)
   const cues = parsedContent.filter(line => line.type === 'cue')
 

@@ -1,0 +1,9 @@
+# Exclude all directories named 'input' in any subdirectory
+**/input/**
+# exception to the rule
+!**/input/.gitkeep 
+
+# Exclude all directories named 'output' in any subdirectory
+**/output/**
+# exception to the rule
+!**/output/.gitkeep 
