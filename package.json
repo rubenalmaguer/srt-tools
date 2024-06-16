@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "my-srt-parser": "github:rubenalmaguer/my-srt-parser#main",
     "subtitle": "^4.2.1"
   }
 }
