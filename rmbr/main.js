@@ -1,6 +1,6 @@
 // Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
+//const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
 const INPUT_DIR_NAME = `${__dirname}/input`;
 const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
@@ -17,15 +18,23 @@ const validFileNames = allFileNames.filter(
   (s) => !!supportedExtensions.includes(s.split(".").pop())
 );
 
+if (!validFileNames.length) {
+  console.log(`\x1b[31m No files to process. \x1b[0m`);
+  process.exit();
+}
+
 for (let fileName of validFileNames) {
   const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 
-  cues.forEach((cue, i) => {
-    // First cue includes episode title in first line. Skip that one.
-    if (i < 1) return;
-    cue.data.text = cue.data.text.replaceAll(/\s*(\r?\n)+\s*/g, " ");
+  // A line break, MAYBE surrounded by spaces,
+  // but NOT preceded by parentheses/brackets,
+  // and NOT followed by hyphen (multi-speaker dialog style)
+  // It matches against the text itself. No need to worry about breaks between cues.
+  const rx = /(?<![\)\]])\s*(\r?\n)+\s*(?!-)/g;
+  cues.forEach((cue) => {
+    cue.data.text = cue.data.text.replaceAll(rx, " ");
   });
 
   console.log(`\x1b[36m WRITING OUTPUT:  ${fileName} \x1b[0m`);
@@ -35,7 +44,3 @@ for (let fileName of validFileNames) {
 }
 
 console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);
-
-
-
-
