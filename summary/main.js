@@ -6,8 +6,9 @@ const __dirname = dirname(__filename);
 
 // Actual script
 import fs from "fs";
+import path from "path";
 import { parseSync } from "subtitle";
-import { gptSummarize } from "./ask-pplx.js";
+import { gptSummarize } from "../ask-pplx.js";
 
 //const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
 const INPUT_DIR_PATH = `${__dirname}/input`;
@@ -38,27 +39,29 @@ for (let fileName of validFileNames) {
   onlyText += texts.join("\n") + "\n"; // Plus line between files
 }
 
-fs.writeFileSync(`${OUTPUT_DIR_PATH}/${FULL_TEXT_OUTPUT_FILE_NAME}`, onlyText);
+fs.writeFileSync(
+  path.join(OUTPUT_DIR_PATH, FULL_TEXT_OUTPUT_FILE_NAME),
+  onlyText
+);
 
 console.log(`\x1b[32m Extraction complete. \x1b[0m`);
 
 try {
   console.log("Summarizing...");
-  const summary = await gptSummarize(onlyText);
-  const strSummary = JSON.stringify(summary);
+  const response = await gptSummarize(onlyText);
+  const summary = response?.choices?.[0]?.message?.content;
 
   if (!summary?.length) {
     console.log(`\x1b[31m Empty summary. \x1b[0m`);
-
     process.exit();
   }
 
-  fs.writeFileSync(
-    `${OUTPUT_DIR_PATH}/${SUMMARY_OUTPUT_FILE_NAME}`,
-    strSummary
-  );
+  fs.writeFileSync(`${OUTPUT_DIR_PATH}/${SUMMARY_OUTPUT_FILE_NAME}`, summary);
   console.log(
-    `\x1b[32m Done. summary saved at ${OUTPUT_DIR_PATH}/${SUMMARY_OUTPUT_FILE_NAME} \x1b[0m`
+    `\x1b[32m Done. summary saved at ${path.join(
+      OUTPUT_DIR_PATH,
+      SUMMARY_OUTPUT_FILE_NAME
+    )} \x1b[0m`
   );
 } catch (e) {
   console.log(
