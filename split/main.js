@@ -47,15 +47,46 @@ for (let fileName of validFileNames) {
     if (text.length > MAX_CHAR_COUNT) {
       // Still too long
       console.log(text);
-      console.log(`\x1b[46m ${splat(trimmed)} \x1b[0m`);
+      const segments = getSegments(text);
+      console.log(`\x1b[46m${segments}\x1b[0m`);
     }
   });
 }
 
 console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);
 
-function splat(text) {
-  const middlePoint = Math.floor(text.length / 2);
-  const whitespaceIndices = /\s/;
-  return middlePoint;
+function getSegments(text, maxLength = MAX_CHAR_COUNT) {
+  let segments = [];
+
+  while (text.length) {
+    if (text.length < maxLength) {
+      segments.push(text);
+      break;
+    }
+
+    const requiredSegments = Math.ceil(text.length / maxLength);
+    const requiredBreaks = requiredSegments - 1;
+    const idealSegmentSize = Math.floor(
+      (text.length - requiredBreaks) / requiredSegments
+    );
+
+    let bestMatch = text.length;
+    let spaceRegex = /\s/dg;
+    let match;
+    while (idealSegmentSize > foundSpaceAt) {
+      console.log(foundSpaceAt);
+      const foundSpaceAt = text.search(/\s/);
+      if (foundSpaceAt < 0) break;
+      if (foundSpaceAt > idealSegmentSize) {
+        break;
+      } else {
+        bestMatch = foundSpaceAt;
+      }
+    }
+
+    segments.push(text.slice(0, bestMatch));
+    text = text.slice(bestMatch + 1);
+  }
+
+  return segments;
 }
