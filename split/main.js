@@ -45,15 +45,22 @@ for (let fileName of validFileNames) {
     }
 
     // Still too long
+    console.log(text);
+
     if (text.length < MAX_CHAR_COUNT * 2) {
-      console.log(text);
+      // Split in only two
+      // Aim for more balanced segements
       const breakpoint = getMiddlestSpace(text);
       console.log(`\x1b[46m${text.slice(0, breakpoint)}\x1b[0m`);
       console.log(`\x1b[46m${text.slice(breakpoint + 1)}\x1b[0m`);
     } else {
-      console.log(`\x1b[41m This needs 3 or more segments \x1b[0m`);
-      console.log(text.length, text);
+      // Split in more than two
+      // As close as possible to max as many times as needed
+      let segments = bruteSplit(text, MAX_CHAR_COUNT);
+      console.log(`\x1b[41m${segments.join("\n")}\x1b[0m`);
     }
+
+    console.log("\n");
   });
 }
 
@@ -81,6 +88,29 @@ function getMiddlestSpace(s) {
   }
 
   return current;
+}
+
+function bruteSplit(s, max) {
+  let resultSegments = [];
+  const words = s.split(" ");
+
+  let segment = [];
+  let length = 0;
+  words.forEach((w) => {
+    if (length + 1 + w.length > max) {
+      resultSegments.push(segment.join(" "));
+      segment = [w];
+      length = w.length;
+      return;
+    }
+
+    segment.push(w);
+    length += 1 + w.length;
+  });
+
+  resultSegments.push(segment.join(" "));
+
+  return resultSegments;
 }
 
 function testMiddlest() {
