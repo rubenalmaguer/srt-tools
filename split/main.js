@@ -44,49 +44,53 @@ for (let fileName of validFileNames) {
       return;
     }
 
-    if (text.length > MAX_CHAR_COUNT) {
-      // Still too long
+    // Still too long
+    if (text.length < MAX_CHAR_COUNT * 2) {
       console.log(text);
-      const segments = getSegments(text);
-      console.log(`\x1b[46m${segments}\x1b[0m`);
+      const breakpoint = getMiddlestSpace(text);
+      console.log(`\x1b[46m${text.slice(0, breakpoint)}\x1b[0m`);
+      console.log(`\x1b[46m${text.slice(breakpoint + 1)}\x1b[0m`);
+    } else {
+      console.log(`\x1b[41m This needs 3 or more segments \x1b[0m`);
+      console.log(text.length, text);
     }
   });
 }
 
 console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);
 
-function getSegments(text, maxLength = MAX_CHAR_COUNT) {
-  let segments = [];
+function getMiddlestSpace(s) {
+  const mid = Math.floor((s.length - 1) / 2); // Subtract space that will be removed
+  if (s[mid] === " ") return mid;
 
-  while (text.length) {
-    if (text.length < maxLength) {
-      segments.push(text);
+  let current = 0;
+  const rx = /\s/dg;
+  let match;
+  while ((match = rx.exec(s))) {
+    const i = match.indices[0][0];
+    if (i > mid) {
+      // First larger than mid.
+      // Is it closer to mid than previous?
+      if (i - mid < mid - current) {
+        current = i;
+      }
       break;
     }
 
-    const requiredSegments = Math.ceil(text.length / maxLength);
-    const requiredBreaks = requiredSegments - 1;
-    const idealSegmentSize = Math.floor(
-      (text.length - requiredBreaks) / requiredSegments
-    );
-
-    let bestMatch = text.length;
-    let spaceRegex = /\s/dg;
-    let match;
-    while (idealSegmentSize > foundSpaceAt) {
-      console.log(foundSpaceAt);
-      const foundSpaceAt = text.search(/\s/);
-      if (foundSpaceAt < 0) break;
-      if (foundSpaceAt > idealSegmentSize) {
-        break;
-      } else {
-        bestMatch = foundSpaceAt;
-      }
-    }
-
-    segments.push(text.slice(0, bestMatch));
-    text = text.slice(bestMatch + 1);
+    current = i;
   }
 
-  return segments;
+  return current;
+}
+
+function testMiddlest() {
+  const lucky = "12345 54321";
+  const unlucky = "123 456 7 654 321";
+  const sentence1 = "This is a sample sentence.";
+  const sentence2 = "Sample sentence this is a.";
+
+  console.log(getMiddlestSpace(lucky));
+  console.log(getMiddlestSpace(unlucky));
+  console.log(getMiddlestSpace(sentence1));
+  console.log(getMiddlestSpace(sentence2));
 }
