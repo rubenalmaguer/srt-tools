@@ -31,20 +31,22 @@ for (let fileName of validFileNames) {
   const cues = parsedContent.filter((line) => line.type === "cue");
 
   let changeCount = 0; // If > 0, write new file w/changes
-  cues.forEach((cue) => {
+  cues.forEach((cue, id) => {
     // Already short enuogh?
     let text = cue.data.text;
-    if (text.length < MAX_CHAR_COUNT) return;
+    if (text.length <= MAX_CHAR_COUNT) return;
 
     // Maybe just too many spaces?
     text = text.trim().replaceAll(/\s+/g, " ");
-    if (text.length < MAX_CHAR_COUNT) {
+    if (text.length <= MAX_CHAR_COUNT) {
       cue.data.text = text;
       changeCount++;
       return;
     }
 
     // Still too long
+    console.log(`\x1b[36m\x1b[44m ${id} \x1b[0m`);
+
     console.log(text);
 
     if (text.length < MAX_CHAR_COUNT * 2) {
@@ -65,6 +67,8 @@ for (let fileName of validFileNames) {
 }
 
 console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);
+
+// TODO: Remove commas at end of segments (and consider the change in length when splitting)
 
 function getMiddlestSpace(s) {
   const mid = Math.floor((s.length - 1) / 2); // Subtract space that will be removed
