@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-//const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
+//const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240725_GoingHome\as-was`;
 const INPUT_DIR_NAME = `${__dirname}/input`;
 const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
@@ -25,7 +25,8 @@ if (!validFileNames.length) {
   process.exit();
 }
 
-for (let fileName of validFileNames) {
+let stillTooLong = 0;
+for (let [fileNumber, fileName] of Object.entries(validFileNames)) {
   const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
@@ -45,7 +46,8 @@ for (let fileName of validFileNames) {
     }
 
     // Still too long
-    console.log(`\x1b[36m\x1b[44m ${id} \x1b[0m`);
+    stillTooLong++;
+    console.log(`\x1b[36m\x1b[44m ${fileNumber} - ${id} \x1b[0m`);
 
     console.log(text);
 
@@ -66,7 +68,8 @@ for (let fileName of validFileNames) {
   });
 }
 
-console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);
+console.log(`\x1b[43m DONE \x1b[0m`);
+console.log(`\x1b[43m Bad segments: ${stillTooLong} \x1b[0m`);
 
 // TODO: Remove commas at end of segments (and consider the change in length when splitting)
 
