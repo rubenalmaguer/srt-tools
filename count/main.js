@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 import { parseSync } from "subtitle";
 import fs from "fs";
 
-const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240723_MaridoCaidoDelCielo\aswas`;
+const INPUT_DIR_NAME = String.raw`\\192.168.1.213\l10n\Prj\스푼라디오\스푼라디오_240619_012_다시태어난여자_KO2multi\04_ED\01_To_ED\es_재검토`;
 //const INPUT_DIR_NAME = `${__dirname}/input`
 const fileNames = fs.readdirSync(INPUT_DIR_NAME);
 

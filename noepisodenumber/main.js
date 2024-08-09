@@ -8,8 +8,12 @@ const __dirname = dirname(__filename);
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-//const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240725_GoingHome\as-was`;
-const INPUT_DIR_NAME = `${__dirname}/input`;
+const INPUT_DIR_NAME = String.raw`
+\\192.168.1.213\l10n\Prj\스푼라디오\스푼라디오_240620_014_내남자의남자친구_KO2multi\06_Delivery\en
+`.trim();
+
+//const INPUT_DIR_NAME = `${__dirname}/input`;
+
 const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
 const allFileNames = fs.readdirSync(INPUT_DIR_NAME);
@@ -31,7 +35,9 @@ for (let fileName of validFileNames) {
   let newCues = [];
   cues.forEach((cue) => {
     const before = cue.data.text;
-    const after = before.replaceAll(/^\[[Ee]pisod(e|io)\s+\d+\]/g, "").trim();
+    const after = before
+      .replaceAll(/^\[\s*(Episodio|EPISODIO|Episode|EPISODE)\s+\d+\]/g, "")
+      .trim();
 
     if (before !== after) {
       console.log(`\x1b[45m ${before} \x1b[0m`);

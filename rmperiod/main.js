@@ -6,14 +6,16 @@ const __dirname = dirname(__filename);
 
 // Actual script
 /**
- * Does NOT split.
- * Literally only removes line breaks
+ * Remove period and commas at end of segments
  */
+
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-//const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
-const INPUT_DIR_NAME = `${__dirname}/input`;
+const INPUT_DIR_NAME = String.raw`
+W:\F\V\Spoon Radio\240716_REDOS\240805_가짜남편\no-ep-num_no-period_split-soft_no-period
+`.trim();
+//const INPUT_DIR_NAME = `${__dirname}/input`;
 const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
 const allFileNames = fs.readdirSync(INPUT_DIR_NAME);
@@ -32,13 +34,9 @@ for (let fileName of validFileNames) {
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 
-  // A line break, MAYBE surrounded by spaces,
-  // but NOT preceded by parentheses/brackets,
-  // and NOT followed by hyphen (multi-speaker dialog style)
-  // It matches against the text itself. No need to worry about breaks between cues.
-  const rx = /(?<![\)\]])\s*(\r?\n)+\s*(?!-)/g;
+  const rx = /(?<!\.\.)[\.,]$/g;
   cues.forEach((cue) => {
-    cue.data.text = cue.data.text.replaceAll(rx, " ");
+    cue.data.text = cue.data.text.replaceAll(rx, "");
   });
 
   console.log(`\x1b[36m WRITING OUTPUT:  ${fileName} \x1b[0m`);

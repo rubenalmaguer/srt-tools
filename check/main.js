@@ -8,7 +8,9 @@ const __dirname = dirname(__filename);
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240725_GoingHome\in-progress\done`;
+const INPUT_DIR_NAME = String.raw`
+W:\F\V\Spoon Radio\240716_REDOS\240807_내남자의남자친구\in-progress\spellchecked
+`.trim();
 //const INPUT_DIR_NAME = `${__dirname}/input`;
 const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
@@ -32,7 +34,7 @@ for (let fileName of validFileNames) {
   const cues = parsedContent.filter((line) => line.type === "cue");
 
   const badBreakRx = /(?<!\])(\r?\n)+(?!-)/;
-  const badPunctuation = /[,\.]$/m;
+  const badPunctuation = /([^\.]\.|,)$/m;
   let badCueIndices = [];
   cues.forEach((cue, i) => {
     const text = cue.data.text;

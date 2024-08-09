@@ -8,8 +8,8 @@ const __dirname = dirname(__filename);
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-//const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240725_GoingHome\as-was`;
-const INPUT_DIR_NAME = `${__dirname}/input`;
+const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240807_내남자의남자친구\in-progress\spellchecked`;
+//const INPUT_DIR_NAME = `${__dirname}/input`;
 const OUTPUT_DIR_NAME = `${__dirname}/output`;
 
 const MAX_CHAR_COUNT = 30;
