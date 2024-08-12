@@ -10,10 +10,6 @@ let actions = fs
   .filter((s) => ".js" === path.extname(s).toLocaleLowerCase())
   .map((s) => path.parse(s).name);
 
-console.log(actions);
-
-process.exit();
-
 const arg = process.argv[2];
 if (!actions.includes(arg)) {
   console.log(`\x1b[30m\x1b[41m Invalid argument \x1b[0m`);
