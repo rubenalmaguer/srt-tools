@@ -1,10 +1,18 @@
 import fs from "fs";
+import path from "node:path";
 import { execFile } from "child_process";
 
 // Validate argument
-let actions = fs.readdirSync("./actions", { withFileTypes: true });
-actions = actions.filter((ent) => ent.isDirectory());
-actions = onlyDirs.map((dirEnt) => dirEnt.name);
+let actions = fs
+  .readdirSync("./actions", { withFileTypes: true })
+  .filter((ent) => ent.isFile())
+  .map((file) => file.name)
+  .filter((s) => ".js" === path.extname(s).toLocaleLowerCase())
+  .map((s) => path.parse(s).name);
+
+console.log(actions);
+
+process.exit();
 
 const arg = process.argv[2];
 if (!actions.includes(arg)) {
@@ -14,7 +22,7 @@ if (!actions.includes(arg)) {
 }
 
 // Execute main script of requested action
-execFile("node", [`./actions/${arg}/main.js`], (error, stdout, stderr) => {
+execFile("node", [`./actions/${arg}.js`], (error, stdout, stderr) => {
   if (error) {
     console.error(`Error executing script: ${error.message}`);
     return;
