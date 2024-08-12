@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 import fs from "fs";
 import path from "path";
 import { parseSync } from "subtitle";
-import { gptSummarize } from "../ask-pplx.js";
+import { gptSummarize } from "../../ask-pplx.js";
 
 //const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
 const INPUT_DIR_PATH = `${__dirname}/input`;
