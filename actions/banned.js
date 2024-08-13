@@ -1,18 +1,10 @@
-// Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Actual script
 import fs from "fs";
-import { parseSync } from "subtitle";
-import { Parser } from "my-srt-parser";
+import { parseSync, formatTimestamp } from "subtitle";
 
-const INPUT_DIR_PATH = `${__dirname}/input`;
-const INPUT_FILE_PATH = `${__dirname}/words.txt`;
+const [IN, OUT] = process.argv.slice(-2);
+const INPUT_FILE_PATH = `./actions/banned-words.txt`;
 
-const allFileNames = fs.readdirSync(INPUT_DIR_PATH);
+const allFileNames = fs.readdirSync(IN);
 const supportedExtensions = ["srt", "vtt"];
 const validFileNames = allFileNames.filter(
   (s) => !!supportedExtensions.includes(s.split(".").pop())
@@ -32,9 +24,8 @@ if (!bannedWords?.length) {
 const bannedRegex = new RegExp("\\b(?:" + bannedWords.join("|") + ")\\b", "gi");
 
 let found = [];
-const parser = new Parser(); // ONLY for ms -> timestamp conversion
 for (let fileName of validFileNames) {
-  const rawContent = fs.readFileSync(`${INPUT_DIR_PATH}/${fileName}`, "utf8");
+  const rawContent = fs.readFileSync(`${IN}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 
@@ -46,7 +37,7 @@ for (let fileName of validFileNames) {
   cues.forEach((cue) => {
     if (bannedRegex.test(cue.data.text)) {
       result.badCues.push({
-        ts: parser.millisecondsToTimestamp(cue.data.start),
+        ts: formatTimestamp(cue.data.start),
         text: cue.data.text,
         matches: cue.data.text.match(bannedRegex),
       });

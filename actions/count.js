@@ -1,16 +1,8 @@
-// Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Actual script
 import { parseSync } from "subtitle";
 import fs from "fs";
 
-const INPUT_DIR_NAME = String.raw`\\192.168.1.213\l10n\Prj\스푼라디오\스푼라디오_240619_012_다시태어난여자_KO2multi\04_ED\01_To_ED\es_재검토`;
-//const INPUT_DIR_NAME = `${__dirname}/input`
-const fileNames = fs.readdirSync(INPUT_DIR_NAME);
+const [IN, OUT] = process.argv.slice(-2);
+const fileNames = fs.readdirSync(IN);
 
 const sortNaturally = (names) => {
   return names.sort((a, b) =>
@@ -27,7 +19,7 @@ for (let fileName of sortedFileNames) {
 
   let singleFileWordCount = 0;
 
-  const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, "utf8");
+  const rawContent = fs.readFileSync(`${IN}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 

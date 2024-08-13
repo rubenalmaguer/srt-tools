@@ -1,22 +1,14 @@
-// Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Actual script
 /**
  * Does NOT split.
- * Literally only removes line breaks
+ * Only replaces breaks with spaces, unless preceeded by brackets, etc.
  */
+
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-//const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
-const INPUT_DIR_NAME = `${__dirname}/input`;
-const OUTPUT_DIR_NAME = `${__dirname}/output`;
+const [IN, OUT] = process.argv.slice(-2);
 
-const allFileNames = fs.readdirSync(INPUT_DIR_NAME);
+const allFileNames = fs.readdirSync(IN);
 const supportedExtensions = ["srt", "vtt"];
 const validFileNames = allFileNames.filter(
   (s) => !!supportedExtensions.includes(s.split(".").pop())
@@ -28,7 +20,7 @@ if (!validFileNames.length) {
 }
 
 for (let fileName of validFileNames) {
-  const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, "utf8");
+  const rawContent = fs.readFileSync(`${IN}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 
@@ -44,7 +36,7 @@ for (let fileName of validFileNames) {
   console.log(`\x1b[36m WRITING OUTPUT:  ${fileName} \x1b[0m`);
 
   const outputContent = stringifySync(cues, { format: "srt" });
-  fs.writeFileSync(`${OUTPUT_DIR_NAME}/${fileName}`, outputContent);
+  fs.writeFileSync(`${OUT}/${fileName}`, outputContent);
 }
 
 console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);

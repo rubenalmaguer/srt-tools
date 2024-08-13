@@ -1,22 +1,9 @@
-// Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Actual script
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-const INPUT_DIR_NAME = String.raw`
-\\192.168.1.213\l10n\Prj\스푼라디오\스푼라디오_240620_014_내남자의남자친구_KO2multi\06_Delivery\en
-`.trim();
+const [IN, OUT] = process.argv.slice(-2);
 
-//const INPUT_DIR_NAME = `${__dirname}/input`;
-
-const OUTPUT_DIR_NAME = `${__dirname}/output`;
-
-const allFileNames = fs.readdirSync(INPUT_DIR_NAME);
+const allFileNames = fs.readdirSync(IN);
 const supportedExtensions = ["srt", "vtt"];
 const validFileNames = allFileNames.filter(
   (s) => !!supportedExtensions.includes(s.split(".").pop())
@@ -28,7 +15,7 @@ if (!validFileNames.length) {
 }
 
 for (let fileName of validFileNames) {
-  const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, "utf8");
+  const rawContent = fs.readFileSync(`${IN}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 
@@ -59,7 +46,7 @@ for (let fileName of validFileNames) {
 
   console.log(`\x1b[36m WRITING OUTPUT:  ${fileName} \x1b[0m`);
   const outputContent = stringifySync(newCues, { format: "srt" });
-  fs.writeFileSync(`${OUTPUT_DIR_NAME}/${fileName}`, outputContent);
+  fs.writeFileSync(`${OUT}/${fileName}`, outputContent);
 }
 
 console.log(`\x1b[30m\x1b[42m DONE \x1b[0m`);

@@ -1,22 +1,14 @@
-// Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Actual script
 import fs from "fs";
 import path from "path";
 import { parseSync } from "subtitle";
-import { gptSummarize } from "../../ask-pplx.js";
+//import { gptSummarize } from "../../ask-pplx.js";
 
-//const INPUT_DIR_NAME = `W:/F/V/Spoon Radio/ES/no-br`;
-const INPUT_DIR_PATH = `${__dirname}/input`;
-const OUTPUT_DIR_PATH = `${__dirname}/output`;
+const [IN, OUT] = process.argv.slice(-2);
+
 const FULL_TEXT_OUTPUT_FILE_NAME = "text_only.txt";
 const SUMMARY_OUTPUT_FILE_NAME = "summary.txt";
 
-const allFileNames = fs.readdirSync(INPUT_DIR_PATH);
+const allFileNames = fs.readdirSync(IN);
 const supportedExtensions = ["srt", "vtt"];
 const validFileNames = allFileNames.filter(
   (s) => !!supportedExtensions.includes(s.split(".").pop())
@@ -32,19 +24,21 @@ let onlyText = "";
 console.log("Extracting text...");
 
 for (let fileName of validFileNames) {
-  const rawContent = fs.readFileSync(`${INPUT_DIR_PATH}/${fileName}`, "utf8");
+  const rawContent = fs.readFileSync(`${IN}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
   const texts = cues.map((cue) => cue.data.text);
   onlyText += texts.join("\n") + "\n"; // Plus line between files
 }
 
-fs.writeFileSync(
-  path.join(OUTPUT_DIR_PATH, FULL_TEXT_OUTPUT_FILE_NAME),
-  onlyText
-);
+fs.writeFileSync(path.join(OUT, FULL_TEXT_OUTPUT_FILE_NAME), onlyText);
 
 console.log(`\x1b[32m Extraction complete. \x1b[0m`);
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+process.exit();
 
 try {
   console.log("Summarizing...");
@@ -56,10 +50,10 @@ try {
     process.exit();
   }
 
-  fs.writeFileSync(`${OUTPUT_DIR_PATH}/${SUMMARY_OUTPUT_FILE_NAME}`, summary);
+  fs.writeFileSync(`${OUT}/${SUMMARY_OUTPUT_FILE_NAME}`, summary);
   console.log(
     `\x1b[32m Done. summary saved at ${path.join(
-      OUTPUT_DIR_PATH,
+      OUT,
       SUMMARY_OUTPUT_FILE_NAME
     )} \x1b[0m`
   );

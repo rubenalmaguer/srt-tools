@@ -1,4 +1,6 @@
-Use the folder's name as argument to `npm start`. For example:
+Set the input/output directories in `env.config`
+
+Then, use the actions's name as argument for `npm start`. For example:
 
 - Count words
   `npm start count`

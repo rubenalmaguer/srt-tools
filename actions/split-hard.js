@@ -1,20 +1,15 @@
-// Get this file's path (__dirname only available in CommonJS)
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+/**
+ * TODO: Actually save to file
+ */
 
-// Actual script
 import fs from "fs";
 import { parseSync, stringifySync } from "subtitle";
 
-const INPUT_DIR_NAME = String.raw`W:\F\V\Spoon Radio\240716_REDOS\240807_내남자의남자친구\in-progress\spellchecked`;
-//const INPUT_DIR_NAME = `${__dirname}/input`;
-const OUTPUT_DIR_NAME = `${__dirname}/output`;
+const [IN, OUT] = process.argv.slice(-2);
 
 const MAX_CHAR_COUNT = 30;
 
-const allFileNames = fs.readdirSync(INPUT_DIR_NAME);
+const allFileNames = fs.readdirSync(IN);
 const supportedExtensions = ["srt", "vtt"];
 const validFileNames = allFileNames.filter(
   (s) => !!supportedExtensions.includes(s.split(".").pop())
@@ -27,7 +22,7 @@ if (!validFileNames.length) {
 
 let stillTooLong = 0;
 for (let [fileNumber, fileName] of Object.entries(validFileNames)) {
-  const rawContent = fs.readFileSync(`${INPUT_DIR_NAME}/${fileName}`, "utf8");
+  const rawContent = fs.readFileSync(`${IN}/${fileName}`, "utf8");
   const parsedContent = parseSync(rawContent);
   const cues = parsedContent.filter((line) => line.type === "cue");
 
